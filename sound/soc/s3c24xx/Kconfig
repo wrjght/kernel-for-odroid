@@ -1,0 +1,191 @@
+config SND_SAMSUNG_SOC
+	tristate "Samsung SoC Audio Drivers"
+	depends on ARCH_S5PC1XX || ARCH_S5PC11X || ARCH_S5P64XX
+	help
+	  Say Y or M if you want to add support for codecs attached to
+	  the Samsung AC97, I2S or SSP interface. You will also need
+	  to select the audio interfaces to support below.
+
+config SND_S3C24XX_SOC
+	tristate
+
+config SND_LPAM_SOC
+	tristate
+
+config SND_S3C24XX_SOC_I2S
+	tristate
+
+config SND_S3C_I2SV2_SOC
+	tristate
+
+config SND_S3C2412_SOC_I2S
+	tristate
+
+config SND_S5P_SOC_I2S
+	tristate
+	select SND_S3C_I2SV2_SOC
+
+config SND_S5P_SOC_I2S_LP
+	tristate
+
+config SND_S3C2443_SOC_AC97
+	tristate
+	select AC97_BUS
+	select SND_SOC_AC97_BUS
+
+config SND_S5P_SOC_AC97
+	tristate
+	select AC97_BUS
+	select SND_SOC_AC97_BUS
+
+config SND_S3C_SOC_PCM
+	tristate
+
+config SND_S5P_SPDIF
+	tristate
+
+config SND_ODROID_SPDIF
+	tristate
+	
+config SND_S5P_SOC_WM8991
+	tristate "SoC Audio support for WM8991 on ODROID"
+	depends on SND_SAMSUNG_SOC && (MACH_SMDKC110 || MACH_SMDKC100 || MACH_HKDKC100)
+	select SND_S3C24XX_SOC
+	select SND_ODROID_SPDIF
+	select SND_S5P_SOC_I2S
+	select SND_SOC_WM8991
+	help
+	  Sat Y if you want to add support for SoC audio on the SMDKS5P.
+
+choice
+    prompt "WM8991 I2C Connection Select"
+	depends on SND_S5P_SOC_WM8991
+
+config SND_S5PC100_GPIO_I2C
+	bool "ODROID WM8991 I2C Connection GPIO"
+	depends on SND_S5P_SOC_WM8991
+	help
+	  Say Y here to make i2c line as GPIO.
+
+config SND_S5PC100_SMBUS_I2C
+	bool "ODROID WM8991 I2C Connection SMBUS"
+	depends on SND_S5P_SOC_WM8991
+	help
+	  Say Y here to make i2c line as SMBUS.
+endchoice
+
+config SND_S5P_SOC_WM8580
+	tristate "SoC Audio support for WM8580 on SMDK-S5P"
+	depends on SND_SAMSUNG_SOC && (MACH_SMDKC110 || MACH_SMDKC100)
+	select SND_S3C24XX_SOC
+	select SND_SOC_WM8580
+	help
+	  Sat Y if you want to add support for SoC audio on the SMDKS5P.
+
+choice
+	prompt "Select SMDK/WM8580 Audio Port Type"
+	depends on SND_S5P_SOC_WM8580 && (MACH_SMDKC110 || MACH_SMDKC100)
+
+config	SND_S5P_SMDK_WM8580_I2S_I2S
+	bool "Primary : I2S, Secondary : I2S"
+	select SND_S5P_SOC_I2S
+	select SND_S3C_I2SV2_SOC
+
+config	SND_S5P_SMDK_WM8580_I2S_PCM
+	bool "Primary : I2S, Secondary : PCM"
+	select SND_S5P_SOC_I2S
+	select SND_S3C_SOC_PCM
+
+endchoice
+
+config SND_S5P_SOC_WM8580_LP
+	tristate "SoC Audio support for WM8580 on SMDK-S5P in LPAM"
+	depends on SND_SAMSUNG_SOC && (MACH_SMDKC110 || MACH_SMDKC100)
+	depends on !SND_S3C24XX_SOC
+	select SND_LPAM_SOC
+	select SND_S5P_SOC_I2S_LP
+	select SND_SOC_WM8580
+	help
+	  Sat Y if you want to add support for SoC audio on the SMDKS5P.
+
+config SND_WM8580_MASTER
+	bool "WM8580 Codec is I2S Master"
+	depends on SND_S5P_SOC_WM8580
+	default n
+	help
+	  Say Y if you want to run SoC as I2S-Slave and CODEC as I2S-Master.
+
+config SND_S5P_USE_XCLK_OUT
+	bool
+	depends on MACH_SMDKC110 && SND_S5P_SOC_WM8580
+	default y
+
+config  S5P_USE_CLKAUDIO
+	bool
+	depends on SND_S5P_SOC_WM8580_LP && !SND_WM8580_MASTER
+	default y
+
+config SND_S3C24XX_SOC_NEO1973_WM8753
+	tristate "SoC I2S Audio support for NEO1973 - WM8753"
+	depends on SND_SAMSUNG_SOC && MACH_NEO1973_GTA01
+	select SND_S3C24XX_SOC
+	select SND_S3C24XX_SOC_I2S
+	select SND_SOC_WM8753
+	help
+	  Say Y if you want to add support for SoC audio on smdk2440
+	  with the WM8753.
+
+config SND_S3C24XX_SOC_SMDK2443_WM9710
+	tristate "SoC AC97 Audio support for SMDK2443 - WM9710"
+	depends on SND_SAMSUNG_SOC && MACH_SMDK2443
+	select SND_S3C24XX_SOC
+	select SND_S3C2443_SOC_AC97
+	select SND_SOC_AC97_CODEC
+	help
+	  Say Y if you want to add support for SoC audio on smdk2443
+	  with the WM9710.
+
+config SND_S3C24XX_SOC_LN2440SBC_ALC650
+	tristate "SoC AC97 Audio support for LN2440SBC - ALC650"
+	depends on SND_SAMSUNG_SOC
+	select SND_S3C24XX_SOC
+	select SND_S3C2443_SOC_AC97
+	select SND_SOC_AC97_CODEC
+	help
+	  Say Y if you want to add support for SoC audio on ln2440sbc
+	  with the ALC650.
+
+config SND_S3C24XX_SOC_S3C24XX_UDA134X
+	tristate "SoC I2S Audio support UDA134X wired to a S3C24XX"
+       	depends on SND_SAMSUNG_SOC
+	select SND_S3C24XX_SOC
+       	select SND_S3C24XX_SOC_I2S
+       	select SND_SOC_UDA134X
+
+config SND_S5P_SOC_SMDK_WM9713
+	tristate "SoC AC97 Audio support for SMDKS5P - WM9713"
+	depends on SND_SAMSUNG_SOC && (MACH_SMDKC110 || MACH_SMDKC100)
+	select SND_S3C24XX_SOC
+	select SND_S5P_SOC_AC97
+	select SND_SOC_AC97_CODEC
+	select SND_SOC_WM9713
+	help
+	  Say Y if you want to add support for SoC audio on smdks5p
+	  with the WM9713.
+
+config SND_S5PC100_SOC_UNIVERSAL_AK4671
+	tristate "SoC I2S Audio support for UNIVERSAL - AK4671"
+	depends on SND_SAMSUNG_SOC && MACH_UNIVERSAL
+	select SND_S3C24XX_SOC
+	select SND_S5P_SOC_I2S
+	select SND_SOC_AK4671
+	select SND_SOC_MAX9877
+	help
+	  Say Y if you want to add support for SoC audio on universal
+	  with the AK4671.
+
+config SND_SMDKS5P_HDMI_SPDIF
+	tristate "HDMI-SPDIF on SMDKS5P"
+	depends on SND_SAMSUNG_SOC && (MACH_SMDKC110 || MACH_SMDKC100 || MACH_HKDKC100)
+	select SND_S3C24XX_SOC
+	select SND_S5P_SPDIF

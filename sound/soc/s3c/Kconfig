@@ -1,0 +1,116 @@
+config SND_S3C64XX_SOC
+	tristate "Samsung SoC Audio"
+	depends on ARCH_S3C64XX
+	help
+	  Say Y or M if you want to add support for codecs attached to
+	  the S3C AC97, I2S or SSP interface. You will also need
+	  to select the audio interfaces to support below.
+
+config SND_S5P_SOC
+	tristate "Samsung SoC Audio"
+	depends on ARCH_S5PC1XX || ARCH_S5PC11X || ARCH_S5P64XX
+	help
+	  Say Y or M if you want to add support for codecs attached to
+	  the S3C AC97, I2S or SSP interface. You will also need
+	  to select the audio interfaces to support below.
+
+config SND_S3C_I2S_V32
+	tristate
+
+config SND_S3C_I2S_V40
+	tristate
+
+config SND_S3C_I2S_V50
+	tristate
+
+config SND_S3C_AC97
+	tristate
+
+config SND_S5P_SPDIF
+	tristate
+	
+choice
+	prompt "Select the codec driver"
+	depends on SND_S3C64XX_SOC || SND_S5P64XX_SOC || SND_S5PC1XX_SOC
+
+config  SND_SMDK6410_WM8580
+	tristate "WM8580-I2S on SMDK6410"
+	depends on SND_S3C64XX_SOC
+	select SND_S3C_I2S_V40
+	select SND_SOC_WM8580
+
+
+endchoice
+
+choice
+	prompt "Select the codec driver"
+	depends on SND_S5P_SOC
+
+config  SND_SMDKC110_WM8580
+	tristate "WM8580-I2S on SMDKC110"
+	depends on ARCH_S5PC11X
+	select SND_S3C_I2S_V50
+	select SND_SOC_WM8580
+
+config  SND_SMDKC100_WM8580
+	tristate "WM8580-I2S on SMDKC100"
+	depends on ARCH_S5PC1XX
+	select SND_S3C_I2S_V50
+	select SND_SOC_WM8580
+
+config  SND_SMDKC100_S5M8751
+	tristate "S5M8751-I2S on SMDKC100"
+	depends on ARCH_S5PC1XX
+	select SND_S3C_I2S_V32
+	select SND_SOC_S5M8751
+
+config  SND_SMDKC100_WM9713
+	tristate "WM9713-AC97 on SMDKC100"
+	depends on ARCH_S5PC1XX
+	select SND_S3C_AC97
+	select SND_SOC_WM9713
+
+config SND_S5PC100_SOC_UNIVERSAL_AK4671
+	tristate "SoC I2S Audio support for UNIVERSAL - AK4671"
+	depends on ARCH_S5PC1XX
+	select SND_S3C_I2S_V50
+	select SND_SOC_AK4671
+	select SND_SOC_MAX9877
+	help
+	  Say Y if you want to add support for SoC audio on universal
+	  with the AK4671.
+
+config  SND_SMDK6442_WM8580
+	tristate "WM8580-I2S on SMDK6442"
+	depends on ARCH_S5P64XX
+	select SND_S3C_I2S_V50
+	select SND_SOC_WM8580
+
+config SND_SMDKC110_HDMI_SPDIF
+	tristate "HDMI-SPDIF on SMDKC110"
+	depends on ARCH_S5PC11X
+	select SND_S5P_SPDIF
+	
+config SND_SMDKC100_HDMI_SPDIF
+	tristate "HDMI-SPDIF on SMDKC100"
+	depends on ARCH_S5PC1XX
+	select SND_S5P_SPDIF
+	
+endchoice
+
+config  SND_WM8580_MASTER
+	bool "WM8580 Codec is I2S Master"
+	depends on SND_SMDKC110_WM8580 || SND_SMDKC100_WM8580 || SND_SMDK6442_WM8580
+	default y
+	help
+	  Say Y if you want to run SoC as I2S-Slave and CODEC as I2S-Master.
+
+config  S5P_USE_CLKAUDIO
+	bool "Use CLKAUDIO"
+	depends on !SND_WM8580_MASTER && (SND_SMDKC110_WM8580 || SND_SMDKC100_WM8580 || SND_SMDK6442_WM8580)
+	default y
+	help
+	  Say Y if you want to generate I2S signals(LRCLK and BCLK) from CLKAUDIO.
+	  Do not select it for SoC I2S-Slave mode.
+	  If this is not selected in SoC I2S-Master mode, then PCLK will be used to
+	  generate(LRCLK and BCLK) signals.

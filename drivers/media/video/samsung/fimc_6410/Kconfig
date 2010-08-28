@@ -1,0 +1,19 @@
+config VIDEO_FIMC
+	bool "Samsung Camera Interface (FIMC) driver"
+	depends on VIDEO_SAMSUNG && (CPU_S3C6410 || CPU_S5PC100 || CPU_S5PC110 || CPU_S5P6442)
+	select VIDEO_IPC if CPU_S5PC110
+	default n
+	---help---
+	  This is a video4linux driver for Samsung FIMC device.
+
+config VIDEO_IPC
+	bool
+
+config VIDEO_FIMC_DEBUG
+	bool "FIMC driver debug messages"
+	depends on VIDEO_FIMC
+
+config VIDEO_FIMC_MIPI
+	bool "MIPI-CSI2 Slave Interface support"
+	depends on VIDEO_FIMC && (CPU_S3C6410 || CPU_S5PC100 || CPU_S5PC110)
+

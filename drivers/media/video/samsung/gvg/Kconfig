@@ -1,0 +1,10 @@
+#
+# Configuration for FIMG-VG
+#
+
+config VIDEO_GVG
+	bool "Samsung FIMG-VG Driver" 
+	depends on VIDEO_SAMSUNG && CPU_S5P6440
+	default n
+	---help---
+	  This is a FIMG-VG(OpenVG accelerator) driver for Samsung S5P6440.
